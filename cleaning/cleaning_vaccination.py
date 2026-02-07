@@ -1,6 +1,6 @@
 import pandas as pd
 
-vac_df = pd.read_csv("C:/Users/noahl/Downloads/Covid_Data_Analysis/Covid-Data-Analysis/data/raw/us_state_vaccinations.csv")
+vac_df = pd.read_csv("data/raw/us_state_vaccinations.csv")
 
 # Ensure date is in datetime format
 vac_df["date"] = pd.to_datetime(vac_df["date"])
@@ -36,7 +36,7 @@ print(vac_df.head())
 
 # save cleaned vaccination data
 vac_df.to_csv(
-    "C:/Users/noahl/Downloads/Covid_Data_Analysis/Covid-Data-Analysis/assembly/cleaned_data/vaccination_2021_06_01.csv",
+    "data/processed/vaccination_2021_06_01.csv",
     index=False
 )
 
