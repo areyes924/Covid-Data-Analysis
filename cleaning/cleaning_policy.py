@@ -104,7 +104,9 @@ keep_cols = [
     "FM_ALL_days_since_earliest_adoption",
 ]
 
+
 policy_df = policy_df[keep_cols]
+policy_df = policy_df.rename(columns={"STATE": "state"})
 
 policy_df.rename(columns={"STATE":"state"}, inplace=True)
 
