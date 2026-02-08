@@ -41,7 +41,7 @@ def build_policy_features(df, start_col, end_col, prefix):
 
     # timing: days since earliest (0 if never adopted)
     df[f"{prefix}_days_since_earliest_adoption"] = (
-        (start_dt - earliest).dt.days.fillna(0)
+        (start_dt - earliest).dt.days.fillna(-1)
     )
 
     # duration: end - start (0 if never adopted)
@@ -87,7 +87,7 @@ policy_df["FM_ALL_days_since_earliest_adoption"] = (
 
 # states with no mandate -> 0
 policy_df["FM_ALL_days_since_earliest_adoption"] = (
-    policy_df["FM_ALL_days_since_earliest_adoption"].fillna(0)
+    policy_df["FM_ALL_days_since_earliest_adoption"].fillna(-1)
 )
 
 
