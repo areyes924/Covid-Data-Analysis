@@ -26,8 +26,6 @@ s = policy_df["STAYHOME"].astype(str).str.strip()
 
 policy_df = policy_df[s.str.match(r"^(0|[0-9]{1,2}/[0-9]{1,2}/[0-9]{4})$")].reset_index(drop=True)
 
-import numpy as np
-import pandas as pd
 
 # this builts the features we need
 # goes from dates to numerical day values
@@ -37,12 +35,16 @@ def build_policy_features(df, start_col, end_col, prefix):
     end_dt = pd.to_datetime(df[end_col], format="%m/%d/%Y", errors="coerce")
 
     # earliest adoption
-    earliest = start_dt.min()
+    earliest = start_dt.dropna().min()
+
+    df[f"{prefix}_never_adopted"] = start_dt.isna().astype(int)
+
 
     # timing: days since earliest (0 if never adopted)
     df[f"{prefix}_days_since_earliest_adoption"] = (
-        (start_dt - earliest).dt.days.fillna(-1)
+        (start_dt - earliest).dt.days.fillna(0)
     )
+    df[f"{prefix}_days_since_earliest_adoption"] = df[f"{prefix}_days_since_earliest_adoption"].fillna(0)
 
     # duration: end - start (0 if never adopted)
     df[f"{prefix}_duration_days"] = np.where(
@@ -80,27 +82,26 @@ policy_df["FM_ALL_dt"] = pd.to_datetime(
 # earliest mask mandate date
 earliest_fm_all = policy_df["FM_ALL_dt"].min()
 
+policy_df["fm_all_never_adopted"] = policy_df["FM_ALL_dt"].isna().astype(int)
+
 # days since earliest adoption
 policy_df["FM_ALL_days_since_earliest_adoption"] = (
-    policy_df["FM_ALL_dt"] - earliest_fm_all
-).dt.days
-
-# states with no mandate -> 0
-policy_df["FM_ALL_days_since_earliest_adoption"] = (
-    policy_df["FM_ALL_days_since_earliest_adoption"].fillna(-1)
-)
+    (policy_df["FM_ALL_dt"] - earliest_fm_all).dt.days
+).fillna(0)
 
 
 keep_cols = [
     "STATE",
     "FMNOENF",
-    "AGEPRIORITY", 
+    "AGEPRIORITY",
+    "stayhome_never_adopted",
     "stayhome_days_since_earliest_adoption",
     "stayhome_duration_days",
+    "clbsns_never_adopted",
     "clbsns_days_since_earliest_adoption",
     "clbsns_duration_days",
-    "FM_ALL_days_since_earliest_adoption"
-
+    "fm_all_never_adopted",
+    "FM_ALL_days_since_earliest_adoption",
 ]
 
 policy_df = policy_df[keep_cols]
