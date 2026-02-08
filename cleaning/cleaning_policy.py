@@ -103,7 +103,9 @@ keep_cols = [
 
 ]
 
+
 policy_df = policy_df[keep_cols]
+policy_df = policy_df.rename(columns={"STATE": "state"})
 
 policy_df.to_csv(
     "data/processed/clean_policy.csv",
